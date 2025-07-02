@@ -4,11 +4,15 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import riccardogulin.dao.BlogsDAO;
+import riccardogulin.dao.CategoriesDAO;
 import riccardogulin.dao.DocumentsDAO;
 import riccardogulin.dao.UsersDAO;
 import riccardogulin.entities.Blog;
+import riccardogulin.entities.Category;
 import riccardogulin.entities.Document;
 import riccardogulin.entities.User;
+
+import java.util.ArrayList;
 
 public class Application {
 	private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("u4d13pu");
@@ -19,6 +23,7 @@ public class Application {
 		UsersDAO ud = new UsersDAO(em);
 		DocumentsDAO dd = new DocumentsDAO(em);
 		BlogsDAO bd = new BlogsDAO(em);
+		CategoriesDAO cd = new CategoriesDAO(em);
 
 		User aldo = new User("Aldo", "Baglio");
 		User giovanni = new User("Giovanni", "Storti");
@@ -50,6 +55,44 @@ public class Application {
 
 		System.out.println("--------------------------- BIDIREZIONALITA' -----------------------");
 		aldoFromDb.getBlogs().forEach(System.out::println);
+
+
+		// *********************************************** MANY TO MANY *****************************************
+		Category category = new Category("Backend");
+		Category category1 = new Category("Frontend");
+		Category category2 = new Category("OOP");
+
+		/*cd.save(category);
+		cd.save(category1);
+		cd.save(category2);*/
+
+		// Per assegnare ad un blog tot categorie dobbiamo:
+		// 1. Leggo le categorie che mi interessano dal database
+		Category backendCatFromDB = cd.findById("3307ce4a-606b-4f06-a5b6-85e4efe4bee3");
+		Category oopCatFromDB = cd.findById("6a937dc1-fc1d-4896-bb03-0dadea4f9e3d");
+		// 2. Creo una lista contenenente tali categorie per quel blog
+		ArrayList<Category> categories = new ArrayList<>();
+		categories.add(backendCatFromDB);
+		categories.add(oopCatFromDB);
+		// 3. Settargliele tramite setter
+		javaFromDB.setCategories(categories);
+		// 4. Risalvare il Blog
+		// bd.save(javaFromDB); // Fare una save su un oggetto proveniente dal db non vuol dire crearne uno nuovo, bensì fare un'UPDATE di quello pre-esistente
+
+
+		Blog postgresFromDB = bd.findById("733c7d9b-628f-4690-b471-0661befd09bf");
+		ArrayList<Category> categories2 = new ArrayList<>();
+		categories2.add(backendCatFromDB);
+		postgresFromDB.setCategories(categories2);
+
+		// bd.save(postgresFromDB);
+
+
+		System.out.println("Tutte le categorie del Blog su Java");
+		javaFromDB.getCategories().forEach(c -> System.out.println(c.getName()));
+
+		System.out.println("Blog associati alla categoria Backend");
+		backendCatFromDB.getBlogsList().forEach(System.out::println);
 
 
 		em.close();

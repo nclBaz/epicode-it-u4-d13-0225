@@ -10,6 +10,7 @@
         <class>riccardogulin.entities.User</class>
         <class>riccardogulin.entities.Document</class>
         <class>riccardogulin.entities.Blog</class>
+        <class>riccardogulin.entities.Category</class>
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/u4d13"/>
             <!-- Dopo l'ultimo slash inserisco il nome del database al quale voglio collegarmi (IL DB DEVE ESISTERE PERO') -->
