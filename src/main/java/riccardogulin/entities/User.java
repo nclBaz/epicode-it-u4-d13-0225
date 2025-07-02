@@ -2,6 +2,7 @@ package riccardogulin.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,12 +24,24 @@ public class User {
 	// N.B. La bidirezionalità non crea nessuna nuova colonna nella tabella users!!!!!!!!!!!!!!!!!!!
 	private Document document;
 
+	// 1 to Many BIDIREZIONALE
+	@OneToMany(mappedBy = "author")
+	private List<Blog> blogs;
+
 	public User() {
 	}
 
 	public User(String name, String surname) {
 		this.name = name;
 		this.surname = surname;
+	}
+
+	public List<Blog> getBlogs() {
+		return blogs;
+	}
+
+	public List<Blog> getBlog() {
+		return blogs;
 	}
 
 	public Document getDocument() {
@@ -61,7 +74,7 @@ public class User {
 				"userId=" + userId +
 				", name='" + name + '\'' +
 				", surname='" + surname + '\'' +
-				", document=" + document +
+				//", document=" + document +
 				'}';
 	}
 }
